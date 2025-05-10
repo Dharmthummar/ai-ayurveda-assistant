@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayurveda AI Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #8E7F4F;
+      --primary-dark: #6A5F3B;
+      --secondary: #C19A6B;
+      --tertiary: #5F8A8B;
+      --accent: #D68060;
+      --text: #111827;
+      --text-light: #4b5563;
+      --text-lighter: #9ca3af;
+      --background: #FFFBF0;
+      --background-alt: #F7F3E3;
+      --border: #e5e7eb;
+      --border-dark: #d1d5db;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --shadow-strong: rgba(0, 0, 0, 0.15);
+      --radius: 8px;
+      --glow: rgba(142, 127, 79, 0.15);
+      --scroll-track: #f1f1f1;
+      --scroll-thumb: #c1c1c1;
+      --vata-color: #805AD5;
+      --pitta-color: #DD6B20;
+      --kapha-color: #2B6CB0;
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary: #C19A6B;
+        --primary-dark: #A88756;
+        --secondary: #8E7F4F;
+        --tertiary: #5F8A8B;
+        --accent: #D68060;
+        --text: #f3f4f6;
+        --text-light: #d1d5db;
+        --text-lighter: #9ca3af;
+        --background: #18181b;
+        --background-alt: #1f2937;
+        --border: #374151;
+        --border-dark: #4b5563;
+        --shadow: rgba(0, 0, 0, 0.4);
+        --shadow-strong: rgba(0, 0, 0, 0.6);
+        --glow: rgba(193, 154, 107, 0.2);
+        --scroll-track: #2d3748;
+        --scroll-thumb: #4a5568;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--scroll-track);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--scroll-thumb);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.05'%3E%3Cpath d='M50 0 L75 25 L100 0 L100 100 L75 75 L50 100 L25 75 L0 100 L0 0 L25 25 Z'/%3E%3Cpath d='M50 30 C63.8 30 75 41.2 75 55 C75 68.8 63.8 80 50 80 C36.2 80 25 68.8 25 55 C25 41.2 36.2 30 50 30 Z'/%3E%3Cpath d='M50 40 C58.3 40 65 46.7 65 55 C65 63.3 58.3 70 50 70 C41.7 70 35 63.3 35 55 C35 46.7 41.7 40 50 40 Z'/%3E%3Cpath d='M50 45 C55.5 45 60 49.5 60 55 C60 60.5 55.5 65 50 65 C44.5 65 40 60.5 40 55 C40 49.5 44.5 45 50 45 Z'/%3E%3C/g%3E%3C/svg%3E");
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Sanskrit Font for Special Elements */
+    .sanskrit {
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.5px;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--background);
+      box-shadow: 0 2px 10px var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(142, 127, 79, 0.2);
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px var(--glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-icon::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, transparent 30%, rgba(255, 255, 255, 0.2) 70%);
+      top: -50%;
+      left: -50%;
+      transition: all 0.5s ease;
+    }
+
+    .logo:hover .logo-icon::after {
+      top: 0;
+      left: 0;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+      top: 0;
+      left: -100%;
+      transition: left 0.5s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px var(--glow);
+    }
+
+    .btn:hover::after {
+      left: 100%;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 6rem 0 4rem;
+      background: linear-gradient(to bottom, var(--background), var(--background-alt));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.2'%3E%3Cpath d='M50 0 L75 25 L100 0 L100 100 L75 75 L50 100 L25 75 L0 100 L0 0 L25 25 Z'/%3E%3Cpath d='M50 30 C63.8 30 75 41.2 75 55 C75 68.8 63.8 80 50 80 C36.2 80 25 68.8 25 55 C25 41.2 36.2 30 50 30 Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      font-family: 'Cormorant Garamond', serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      display: inline-block;
+    }
+    .hero h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      font-family: 'Cormorant Garamond', serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero h1::before {
+      content: 'ॐ';
+      position: absolute;
+      top: -30px;
+      left: -20px;
+      font-size: 5rem;
+      opacity: 0.1;
+      color: var(--primary);
+    }
+
+    .hero h1::after {
+      content: 'ॐ';
+      position: absolute;
+      bottom: -50px;
+      right: -20px;
+      font-size: 5rem;
+      opacity: 0.1;
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    /* Video Container */
+    .video-container {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 10px 25px var(--shadow-strong);
+      transition: transform 0.5s ease;
+    }
+
+    .video-container:hover {
+      transform: translateY(-5px);
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease;
+      z-index: 1;
+    }
+
+    .play-button {
+      width: 80px;
+      height: 80px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .play-button i {
+      color: white;
+      font-size: 2rem;
+      margin-left: 5px;
+    }
+
+    .play-button:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .hero-video {
+      width: 100%;
+      display: block;
+    }
+
+    /* Project Info Section */
+    .project-info {
+      padding: 5rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.2'%3E%3Cpath d='M25 25 L75 25 L75 75 L25 75 Z'/%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50 Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      font-family: 'Cormorant Garamond', serif;
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-header h2::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 3px;
+      background-color: var(--primary);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .section-header p {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .project-card {
+      background-color: var(--background);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 5px 15px var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px var(--shadow-strong);
+    }
+
+    .project-image {
+      width: fit-content;
+      height: 200px;
+      overflow: hidden;
+      background-color: rgb(255, 255, 255);
+    }
+
+    .project-image img {
+      width: max-content;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .project-card:hover .project-image img {
+      transform: scale(1.05);
+    }
+
+    .project-content {
+      padding: 1.5rem;
+    }
+
+    .project-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+
+    .project-content p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .project-tag {
+      background-color: rgba(142, 127, 79, 0.1);
+      color: var(--primary);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Doshas Section */
+    .doshas {
+      padding: 5rem 0;
+      background-color: var(--background-alt);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.05'%3E%3Cpath d='M50 0 C77.6 0 100 22.4 100 50 C100 77.6 77.6 100 50 100 C22.4 100 0 77.6 0 50 C0 22.4 22.4 0 50 0 Z'/%3E%3Cpath d='M50 20 C66.5 20 80 33.5 80 50 C80 66.5 66.5 80 50 80 C33.5 80 20 66.5 20 50 C20 33.5 33.5 20 50 20 Z'/%3E%3Cpath d='M50 35 C58.3 35 65 41.7 65 50 C65 58.3 58.3 65 50 65 C41.7 65 35 58.3 35 50 C35 41.7 41.7 35 50 35 Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .dosha-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+
+    .dosha-card {
+      background-color: var(--background);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 5px 15px var(--shadow);
+      width: 100%;
+      max-width: 350px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .dosha-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px var(--shadow-strong);
+    }
+
+    .dosha-image {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .dosha-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .dosha-card:hover .dosha-image img {
+      transform: scale(1.05);
+    }
+
+    .dosha-content {
+      padding: 1.5rem;
+    }
+
+    .dosha-content h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .dosha-content p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .dosha-traits {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .dosha-trait {
+      background-color: rgba(142, 127, 79, 0.1);
+      color: var(--primary);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Prakriti Analysis Section */
+    .prakriti-analysis {
+      padding: 5rem 0;
+      background: linear-gradient(to bottom, var(--background), var(--background-alt));
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.05'%3E%3Cpath d='M0 0 L50 50 L0 100 Z'/%3E%3Cpath d='M100 0 L50 50 L100 100 Z'/%3E%3Cpath d='M50 0 L50 100 Z'/%3E%3Cpath d='M0 50 L100 50 Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .analysis-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .analysis-image {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .analysis-image img {
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px var(--shadow-strong);
+    }
+
+    .analysis-content {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .analysis-content h3 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .analysis-content p {
+      font-size: 1rem;
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .analysis-steps {
+      margin-top: 2rem;
+    }
+
+    .analysis-step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .step-content p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: 0;
+    }
+
+    /* Webcam Analysis Section */
+    .webcam-analysis {
+      padding: 5rem 0;
+      background-color: var(--background-alt);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.05'%3E%3Cpath d='M33.3 33.3 L66.6 33.3 L66.6 66.6 L33.3 66.6 Z'/%3E%3Cpath d='M0 0 L33.3 33.3 L0 66.6 Z'/%3E%3Cpath d='M100 0 L66.6 33.3 L100 66.6 Z'/%3E%3Cpath d='M0 100 L33.3 66.6 L66.6 100 Z'/%3E%3Cpath d='M100 100 L66.6 66.6 L100 33.3 Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .webcam-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .webcam-preview {
+      display: flex;
+      width: 425px;
+      min-width: 300px;
+      position: relative;
+      height: 500px;
+      background-color: var(--background);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 10px 25px var(--shadow-strong);
+      background-image:url('https://github.com/user-attachments/assets/e0e91a16-70b1-4221-ba86-be5f075365fd');
+      background-repeat: no-repeat;
+    }
+
+    .webcam-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    .webcam-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      transition: opacity 0.5s ease;
+    }
+
+    .webcam-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .webcam-controls {
+      margin-top: 2rem;
+    }
+
+    .face-scan-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(142, 127, 79, 0.45), transparent);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      animation: scanAnimation 3s infinite;
+      display: none;
+    }
+
+    @keyframes scanAnimation {
+      0% {
+        transform: translateY(-100%);
+      }
+      100% {
+        transform: translateY(100%);
+      }
+    }
+
+    .webcam-result {
+      flex: 1;
+      min-width: 300px;
+      background-color: var(--background);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: 0 10px 25px var(--shadow-strong);
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .result-icon {
+      width: 50px;
+      height: 50px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+    }
+
+    .result-title h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .result-title p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    .dosha-chart {
+      margin: 2rem 0;
+    }
+
+    .dosha-bar {
+      height: 30px;
+      margin-bottom: 1rem;
+      border-radius: var(--radius);
+      position: relative;
+      background-color: rgba(142, 127, 79, 0.1);
+      overflow: hidden;
+    }
+
+    .dosha-bar-vata {
+      background-color: var(--vata-color);
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius);
+      transition: width 1.5s ease-in-out;
+    }
+
+    .dosha-bar-pitta {
+      background-color: var(--pitta-color);
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius);
+      transition: width 1.5s ease-in-out;
+    }
+
+    .dosha-bar-kapha {
+      background-color: var(--kapha-color);
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius);
+      transition: width 1.5s ease-in-out;
+    }
+
+    .dosha-percentages {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dosha-percentage {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .dosha-color {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+    }
+
+    .dosha-color-vata {
+      background-color: var(--vata-color);
+    }
+
+    .dosha-color-pitta {
+      background-color: var(--pitta-color);
+    }
+
+    .dosha-color-kapha {
+      background-color: var(--kapha-color);
+    }
+
+    .result-recommendations {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background-color: rgba(142, 127, 79, 0.05);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--primary);
+    }
+
+    .result-recommendations h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .recommendation-list {
+      list-style-type: none;
+    }
+
+    .recommendation-list li {
+      margin-bottom: 0.75rem;
+      padding-left: 1.5rem;
+      position: relative;
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    .recommendation-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--primary);
+    }
+
+    /* Chat Demo Section */
+    .chat-demo {
+      padding: 5rem 0;
+      background: linear-gradient(to bottom, var(--background), var(--background-alt));
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.08'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50 Z'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='25' text-anchor='middle' dominant-baseline='middle' fill='%238E7F4F'%3Eॐ%3C/text%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .chat-container {
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 10px 25px var(--shadow-strong);
+      background-image: url('https://github.com/user-attachments/assets/bd5c9b73-80b7-4267-884f-7c0d5b8194d5');
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: overlay;
+      background-color: rgba(25, 25, 25, 0.25);
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background-color: var(--primary opacity(0.8));
+      color: white;
+    }
+
+    .chat-header-icon {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    .chat-header-text h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .chat-header-text p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .chat-messages {
+      height: 300px;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .message {
+      max-width: 80%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .assistant-message {
+      align-self: flex-start;
+    }
+
+    .user-message {
+      align-self: flex-end;
+    }
+
+    .message-content {
+      padding: 1rem;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      position: relative;
+    }
+
+    .assistant-message .message-content {
+      background-color: rgba(142, 127, 79, 0.1);
+      color: rgba(225, 225, 225, 0.9);
+      border-bottom-left-radius: 0;
+    }
+
+    .user-message .message-content {
+      background-color: var(--primary);
+      color: white;
+      border-bottom-right-radius: 0;
+    }
+
+    .message-time {
+      font-size: 0.75rem;
+      color: var(--text-lighter);
+      margin-top: 0.5rem;
+      align-self: flex-start;
+    }
+
+    .user-message .message-time {
+      align-self: flex-end;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem;
+      background-color: rgba(142, 127, 79, 0.1);
+      border-radius: var(--radius);
+      width: fit-content;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--text-lighter);
+      border-radius: 50%;
+      animation: typingAnimation 1.5s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes typingAnimation {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius) 0 0 var(--radius);
+      font-size: 0.95rem;
+      background-color: var(--background);
+      color: var(--text);
+      outline: none;
+    }
+
+    .chat-input input:focus {
+      border-color: var(--primary);
+    }
+
+    .chat-input button {
+      padding: 0.75rem 1.5rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .chat-input button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Testimonials Section */
+    .testimonials {
+      padding: 5rem 0;
+      background: linear-gradient(to bottom, var(--background), var(--background-alt));
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.08'%3E%3Cpath d='M25 25 L75 25 L75 75 L25 75 Z'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='28' text-anchor='middle' dominant-baseline='middle' fill='%238E7F4F'%3Eत्रिदोष%3C/text%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .testimonials-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .testimonial {
+      flex: 1;
+      min-width: 300px;
+      background-color: var(--background);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: 0 10px 25px var(--shadow-strong);
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .testimonial:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px var(--shadow-strong);
+    }
+
+    .testimonial::before {
+      content: '"';
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      font-size: 5rem;
+      opacity: 0.1;
+      color: var(--primary);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .testimonial-quote {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    .author-info h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--text);
+    }
+
+    .author-info p {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+
+    /* FAQ Section */
+    .faq {
+      padding: 5rem 0;
+      background-color: var(--background-alt);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='%238E7F4F' fill-opacity='0.1'%3E%3Cpath d='M0 0 L50 0 L50 50 L0 50 Z'/%3E%3Cpath d='M50 0 L100 0 L100 50 L50 50 Z'/%3E%3Cpath d='M0 50 L50 50 L50 100 L0 100 Z'/%3E%3Cpath d='M50 50 L100 50 L100 100 L50 100 Z'/%3E%3Ctext x='25' y='25' font-family='Arial' font-size='20' text-anchor='middle' dominant-baseline='middle' fill='%238E7F4F'%3Eवात%3C/text%3E%3Ctext x='75' y='25' font-family='Arial' font-size='20' text-anchor='middle' dominant-baseline='middle' fill='%238E7F4F'%3Eपित्त%3C/text%3E%3Ctext x='25' y='75' font-family='Arial' font-size='20' text-anchor='middle' dominant-baseline='middle' fill='%238E7F4F'%3Eकफ%3C/text%3E%3Ctext x='75' y='75' font-family='Arial' font-size='20' text-anchor='middle' dominant-baseline='middle' fill='%238E7F4F'%3Eप्रकृति%3C/text%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+      margin-top: 2rem;
+    }
+
+    .faq-item {
+      background-color: var(--background);
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      overflow: hidden;
+      box-shadow: 0 5px 15px var(--shadow);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .faq-item:hover {
+      box-shadow: 0 10px 25px var(--shadow-strong);
+    }
+
+    .faq-question {
+      padding: 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-question::after {
+      content: '\f107';
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900;
+      color: var(--primary);
+      transition: transform 0.3s ease;
+    }
+
+    .faq-item.active .faq-question::after {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+    }
+
+    .faq-answer p {
+      padding: 0 1.5rem 1.5rem;
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 5rem 0;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='%23FFFFFF' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .cta h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .cta p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      opacity: 0.9;
+    }
+
+    .cta .btn {
+      background-color: white;
+      color: var(--primary);
+      font-size: 1.1rem;
+      padding: 0.75rem 1.5rem;
+    }
+
+    .cta .btn:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--background-alt);
+      padding: 4rem 0 2rem;
+      border-top: 1px solid var(--border);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%238E7F4F' fill-opacity='0.08'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50 Z'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='25' text-anchor='middle' dominant-baseline='middle' fill='%238E7F4F'%3Eॐ%3C/text%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-about {
+      flex: 2;
+      min-width: 300px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-logo-icon {
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    .footer-logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .footer-about p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      background-color: rgba(142, 127, 79, 0.1);
+      color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .footer-social a:hover {
+      background-color: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    .footer-links {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .footer-links h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .footer-links ul {
+      list-style-type: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+      display: inline-block;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+      transform: translateX(3px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-bottom p {
+      font-size: 0.85rem;
+      color: var(--text-lighter);
+    }
+
+    /* Project Info Banner */
+    .project-info-banner {
+      background-color: rgba(142, 127, 79, 0.1);
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--primary);
+    }
+
+    .project-info-banner p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin: 0;
+    }
+
+    .project-info-banner a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .project-info-banner a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .hero h1 {
+        font-size: 2.75rem;
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+      }
+
+      .section-header h2 {
+        font-size: 2.25rem;
+      }
+
+      .analysis-container {
+        flex-direction: column;
+      }
+
+      .analysis-image {
+        order: 1;
+      }
+
+      .analysis-content {
+        order: 2;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .hero h1 {
+        font-size: 2.25rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .section-header h2 {
+        font-size: 2rem;
+      }
+
+      .dosha-cards {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .dosha-card {
+        max-width: 100%;
+      }
+
+      .webcam-container {
+        flex-direction: column;
+      }
+
+      .testimonials-container {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.75rem;
+      }
+
+      .cta h2 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav class="navbar">
+        <a href="#" class="logo">
+          <div class="logo-icon">A</div>
+          <div class="logo-text">Ayurveda AI</div>
+        </a>
+        <div class="nav-links">
+          <a href="#project-info">Project Info</a>
+          <a href="#doshas">Doshas</a>
+          <a href="#prakriti">Prakriti Analysis</a>
+          <a href="#chat-demo">Chat</a>
+          <a href="#faq">FAQ</a>
+          <a href="https://github.com/dharmthummar/ai-ayurveda-assistant" target="_blank" class="btn">
+            <i class="fab fa-github"></i> View on GitHub
+          </a>
+        </div>
+        <button class="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-pattern"></div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>Ancient Wisdom, Modern Health</h1>
+        <h2>प्राचीनं ज्ञानं आधुनिकं आरोग्यम् ||</h2>
+        <p>Our AI assistant provides personalized recommendations for your health and lifestyle. Based on Ayurvedic Books, Using LLM & Computer Vision Models</p>
+        <div class="project-info-banner">
+          <p><strong>Note:</strong> This is a project brief page. For the full project and source code, please visit our <a href="https://github.com/dharmthummar/ai-ayurveda-assistant" target="_blank">GitHub repository</a>.</p>
+        </div>
+        <div class="hero-buttons">
+          <a href="#chat-demo" class="btn">
+            <i class="fas fa-comments"></i> Talk to Ayurveda Assistant
+          </a>
+          <a href="#project-info" class="btn btn-outline">
+            <i class="fas fa-leaf"></i> Learn More
+          </a>
+        </div>
+        
+        <!-- Video Container -->
+        <div class="video-container">
+          <div class="video-overlay">
+            <div class="play-button">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <video class="hero-video" poster="https://images.unsplash.com/photo-1611071536360-25feee22f9b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=400&q=80" controls>
+            <source src="https://github.com/user-attachments/assets/d8f33788-c5b9-4d75-978a-01e92dec832b">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Info Section -->
+  <section id="project-info" class="project-info">
+    <div class="project-pattern"></div>
+    <div class="container">
+      <div class="section-header">
+        <h2>Project Information</h2>
+        <p>Learn about the AI project, its features, and the technology behind it.</p>
+      </div>
+      <div class="project-info-banner">
+        <p><strong>Notice:</strong> This is just a brief overview. The full project research with all features is available soon on <a href="https://github.com/dharmthummar/ai-ayurveda-assistant" target="_blank">GitHub repository</a>.</p>
+      </div>
+      <div class="project-grid">
+        <div class="project-card">
+          <div class="project-image">
+            <img src="https://github.com/user-attachments/assets/88c93995-d6c5-4c24-8c47-a25472f50017">
+          </div>
+          <div class="project-content">
+            <h3>Project Overview</h3>
+            <p>AI-powered webapp of RAG-chatbot leveraging Ayurvedic texts and prakriti identification functionality using facial features. Focused on healthcare and medication</p>
+            <div class="project-tags">
+              <span class="project-tag">AI/ML</span>
+              <span class="project-tag">Ayurveda</span>
+              <span class="project-tag">Health</span>
+              <span class="project-tag">NLP</span>
+              <span class="project-tag">CVDL</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image">
+            <img src="https://github.com/user-attachments/assets/ff0ddba7-7ba0-4739-8365-19918eb08648" alt="Key Features">
+          </div>
+          <div class="project-content">
+            <h3>Key Features</h3>
+            <p>Our project includes facial analysis for Prakriti determination, personalized recommendations, and an  chat assistant.</p>
+            <div class="project-tags">
+              <span class="project-tag">Facial Analysis</span>
+              <span class="project-tag">Chat</span>
+              <span class="project-tag">Personalization</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image">
+            <img src="https://github.com/user-attachments/assets/9228dfc8-ea42-4204-8136-fd52bbb70d5d" alt="Technology Stack">
+          </div>
+          <div class="project-content">
+            <h3>Technology Stack</h3>
+            <p>Built using HTML, CSS, JavaScript for the frontend, with Python, LLM and Vision Models, built the AI components and facial analysis.</p>
+            <div class="project-tags">
+              <span class="project-tag">HTML/CSS</span>
+              <span class="project-tag">JavaScript</span>
+              <span class="project-tag">Python</span>
+              <span class="project-tag">TensorFlow</span>
+              <span class="project-tag">socket</span>
+              <span class="project-tag">Fast API</span>
+              <span class="project-tag">LangChain & ChromaDB</span>
+              <span class="project-tag">MediaPipe</span>
+              
+            </div>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image">
+            <img src="https://github.com/user-attachments/assets/e3d6aa6b-d369-4011-a9f7-c979395a2274">
+          </div>
+          <div class="project-content">
+            <h3>Future Development</h3>
+            <p>We plan to enhance the AI model accuracy, add more personalized recommendations, and develop a mobile application.</p>
+            <div class="project-tags">
+              <span class="project-tag">AI Enhancement</span>
+              <span class="project-tag">Mobile App</span>
+              <span class="project-tag">Research</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Doshas Section -->
+  <section id="doshas" class="doshas">
+    <div class="container">
+      <div class="section-header">
+        <h2>Understanding Doshas</h2>
+        <p>In Ayurveda, doshas are the three energies that define every person's makeup. Learn about each dosha and its characteristics.</p>
+      </div>
+      <div class="dosha-cards">
+        <div class="dosha-card">
+          <div class="dosha-image">
+            <img src="https://github.com/user-attachments/assets/e4bfa649-65bc-4063-810a-ae313ec1b1a3" alt="Vata Dosha">
+          </div>
+          <div class="dosha-content">
+            <h3>Vata Dosha</h3>
+            <p>Composed of air and space elements, Vata governs movement and change in the body. When balanced, Vata promotes creativity and flexibility.</p>
+            <div class="dosha-traits">
+              <span class="dosha-trait">Creative</span>
+              <span class="dosha-trait">Energetic</span>
+              <span class="dosha-trait">Quick</span>
+              <span class="dosha-trait">Adaptable</span>
+              <span class="dosha-trait">Light</span>
+            </div>
+          </div>
+        </div>
+        <div class="dosha-card">
+          <div class="dosha-image">
+            <img src="https://github.com/user-attachments/assets/311c7fac-9489-4106-abce-0b86bc17c085" alt="Pitta Dosha">
+          </div>
+          <div class="dosha-content">
+            <h3>Pitta Dosha</h3>
+            <p>Composed of fire and water elements, Pitta governs metabolism, digestion, and transformation. When balanced, Pitta promotes intelligence and courage.</p>
+            <div class="dosha-traits">
+              <span class="dosha-trait">Focused</span>
+              <span class="dosha-trait">Intelligent</span>
+              <span class="dosha-trait">Ambitious</span>
+              <span class="dosha-trait">Precise</span>
+              <span class="dosha-trait">Warm</span>
+            </div>
+          </div>
+        </div>
+        <div class="dosha-card">
+          <div class="dosha-image">
+            <img src="https://github.com/user-attachments/assets/8ae44dec-0f61-4092-b5bd-3072bd2dd037" alt="Kapha Dosha">
+          </div>
+          <div class="dosha-content">
+            <h3>Kapha Dosha</h3>
+            <p>Composed of earth and water elements, Kapha governs structure, stability, and lubrication. When balanced, Kapha promotes strength and emotional stability.</p>
+            <div class="dosha-traits">
+              <span class="dosha-trait">Calm</span>
+              <span class="dosha-trait">Nurturing</span>
+              <span class="dosha-trait">Loyal</span>
+              <span class="dosha-trait">Patient</span>
+              <span class="dosha-trait">Strong</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prakriti Analysis Section -->
+  <section id="prakriti" class="prakriti-analysis">
+    <div class="container">
+      <div class="section-header">
+        <h2>Prakriti Analysis</h2>
+        <p>In Ayurveda, Prakriti is your innate physical and mental constitution. Knowing your Prakriti is the first step to adopting a healthy lifestyle.</p>
+      </div>
+      <div class="analysis-container">
+        <div class="analysis-image">
+          <img src="https://github.com/user-attachments/assets/88656fbb-9467-479c-8f22-3c7347990c62" alt="Prakriti Analysis">
+        </div>
+        <div class="analysis-content">
+          <h3>Facial Features Reveal Your Prakriti</h3>
+          <p>In Ayurveda, facial features are considered important indicators of a person's Prakriti (Dosha). Our advanced AI analyzes various facial features to determine your predominant doshas.</p>
+         
+          <div class="analysis-steps">
+            <div class="analysis-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>Feature Extraction</h4>
+                <p>Utilize MobileNetV2 and ResNet50 for extracting features from 
+                  facial images, capturing characteristics like face shape and skin texture. </p>
+              </div>
+            </div>
+            <div class="analysis-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>Facial Landmark Detection</h4>
+                <p>Apply MediaPipe to detect landmarks and compute 
+                  geometric ratios, such as the face width-to-height ratio</p>
+                  
+              </div>
+            </div>
+            <div class="analysis-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4>Dosha Classification</h4>
+                <p>Gives instant results showing your dosha composition and personalized recommendations.</p>
+                <table border="1">
+                  <tr>
+                    <th>Prakriti</th>
+                    <th>Mouth, Ear, Nose</th>
+                  </tr>
+                  <tr>
+                    <td>Vata</td>
+                    <td>Width &lt; Height</td>
+                  </tr>
+                  <tr>
+                    <td>Pitta</td>
+                    <td>Width = Height</td>
+                  </tr>
+                  <tr>
+                    <td>Kapha</td>
+                    <td>Width &gt; Height</td>
+                  </tr>
+                </table>
+                
+              </div>
+            </div>
+          </div>
+          <a href="#webcam-analysis" class="btn" style="margin-top: 1.5rem;">
+            <i class="fas fa-camera"></i> Analyze Face
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Webcam Analysis Section -->
+  <section id="webcam-analysis" class="webcam-analysis">
+    <div class="container">
+      <div class="section-header">
+        <h2>AI Prakriti Analysis</h2>
+        <p>Discover your Ayurvedic Dosha based on your facial features</p>
+      </div>
+      <div class="project-info-banner">
+        <p><strong>Demo Only:</strong> This is a simulated analysis for demonstration purposes. The full AI implementation is available in the <a href="https://github.com/dharmthummar/ai-ayurveda-assistant" target="_blank">complete project</a>.</p>
+      </div>
+      <div class="webcam-container">
+        <div class="webcam-preview">
+          <video class="webcam-video" autoplay playsinline></video>
+          <div class="webcam-overlay">
+            <div class="webcam-icon">
+              <i class="fas fa-camera"></i>
+            </div>
+            <p>Click the button below to start facial analysis</p>
+            <div class="webcam-controls">
+              <button class="btn" id="enable-camera">
+                <i class="fas fa-video"></i> Start Analysis
+              </button>
+            </div>
+          </div>
+          <div class="face-scan-animation"></div>
+        </div>
+        <div class="webcam-result">
+          <div class="result-header">
+            <div class="result-icon">
+              <i class="fas fa-leaf"></i>
+            </div>
+            <div class="result-title">
+              <h3>Your Prakriti Analysis</h3>
+              <p>Dosha composition based on your facial features</p>
+            </div>
+          </div>
+          <div class="dosha-chart">
+            <div class="dosha-bar">
+              <div class="dosha-bar-vata" style="width: 0%;"></div>
+            </div>
+            <div class="dosha-bar">
+              <div class="dosha-bar-pitta" style="width: 0%;"></div>
+            </div>
+            <div class="dosha-bar">
+              <div class="dosha-bar-kapha" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="dosha-percentages">
+            <div class="dosha-percentage">
+              <div class="dosha-color dosha-color-vata"></div>
+              <span>Vata: 35%</span>
+            </div>
+            <div class="dosha-percentage">
+              <div class="dosha-color dosha-color-pitta"></div>
+              <span>Pitta: 45%</span>
+            </div>
+            <div class="dosha-percentage">
+              <div class="dosha-color dosha-color-kapha"></div>
+              <span>Kapha: 20%</span>
+            </div>
+          </div>
+          <p>Your Dosha is predominantly <strong>Pitta-Vata</strong>. This means you have a predominance of Pitta and Vata doshas.</p>
+          <div class="result-recommendations">
+            <h4>Ayurvedic Recommendations for You:</h4>
+            <ul class="recommendation-list">
+              <li>Consume foods with moderate temperature, avoid excessively spicy and hot foods.</li>
+              <li>Adopt a regular routine, especially for sleeping and waking times.</li>
+              <li>Engage in calming and focused activities such as yoga and pranayama.</li>
+              <li>Include ghee, olive oil, and coconut oil in your diet.</li>
+              <li>Drink warm water and avoid cold beverages.</li>
+            </ul>
+          </div>
+          <button class="btn" style="margin-top: 1.5rem;" id="chat-with-results">
+            <i class="fas fa-comments"></i> Chat with these results
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chat Demo Section -->
+  <section id="chat-demo" class="chat-demo">
+    <div class="container">
+      <div class="section-header">
+        <h2>Chat with AyurBot</h2>
+        <p>Ask questions about Ayurvedic practices, remedies, or get personalized recommendations.</p>
+      </div>
+      <div class="project-info-banner">
+        <p><strong>Interactive Demo:</strong> This chat interface simulates the AI assistant. For the fully functional version with advanced natural language processing, visit our <a href="https://github.com/dharmthummar/ai-ayurveda-assistant" target="_blank">GitHub repository</a>.</p>
+      </div>
+      <div class="chat-container">
+        <div class="chat-header">
+          <div class="chat-header-icon">A</div>
+          <div class="chat-header-text">
+            <h3>AyurBot</h3>
+            <p>आयुषो वेद आयुर्वेदः।</p>
+          </div>
+        </div>
+        <div class="chat-messages">
+          <div class="message assistant-message">
+            <div class="message-content">
+              Namaste! I'm ayurai your Ayurveda Assistant. How can I help with your balance and health journey today?
+            </div>
+            <div class="message-time">10:30 AM</div>
+          </div>
+          <div class="message user-message">
+            <div class="message-content">
+              I've been feeling low energy lately. What would Ayurveda suggest?
+            </div>
+            <div class="message-time">10:31 AM</div>
+          </div>
+          <div class="message assistant-message">
+            <div class="message-content">
+              Based on your symptoms, there might be an imbalance in Vata dosha. I recommend establishing a regular sleep routine, practicing self-massage with warm oil, and including warm, nourishing foods in your diet.
+            </div>
+            <div class="message-time">10:32 AM</div>
+          </div>
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+        <div class="chat-input">
+          <input type="text" placeholder="Ask about Ayurvedic remedies, doshas, or lifestyle...">
+          <button>Send</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="faq">
+    <div class="container">
+      <div class="section-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Find answers to common questions about Ayurveda and our assistant.</p>
+      </div>
+     
+      <div class="faq-container">
+
+       
+        <div class="faq-item active">
+          <div class="faq-question">How accurate is the Prakriti analysis?</div>
+          <div class="faq-answer">
+            <p>our Prakriti analysis combines traditional Ayurvedic principles with modern technology. The facial analysis feature was developed based on classification of human faces according to facial features like shape, ratio, symmetry, skin tone etc., and validated by students and also referred to research journal papers for rule-based classification thresholds.</p>
+            <p>To ensure your safety, we limited the assistant response to providing generic healthy tips and solutions intended to support a healthy life.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">What is Ayurveda?</div>
+          <div class="faq-answer">
+            <p>Ayurveda is a traditional Indian system of medicine that is more than 5,000 years old. It focuses on creating harmony between body, mind, and spirit using diet, herbs, lifestyle practices, and various therapies. The word "Ayurveda" comes from Sanskrit, meaning "the science of life."</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Can Ayurveda help with chronic conditions?</div>
+          <div class="faq-answer">
+            <p>Ayurveda takes a holistic approach to health and can be beneficial for managing various chronic conditions by addressing root causes rather than just symptoms. However, it's important to note that Ayurveda should complement, not replace, conventional medical treatment. Always consult healthcare professionals when dealing with serious health conditions.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Is the Ayurveda Assistant suitable for beginners?</div>
+          <div class="faq-answer">
+            <p>Absolutely! Our Ayurveda Assistant is designed to be accessible for everyone from beginners to those experienced with Ayurvedic principles. The interface is user-friendly, and explanations are provided in clear, simple language. We also provide educational resources to help deepen your understanding of Ayurveda as you progress.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="cta-pattern"></div>
+    <div class="container">
+      <h2>Start Your Ayurvedic Journey Today</h2>
+      <p>Get personalized insights and recommendations tailored to your unique Dosha and health goals.</p>
+      <div class="project-info-banner" style="background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid white;">
+        <p><strong>Prototype Notice:</strong> This is a concept demonstration. For the full project with all features, visit our <a href="https://github.com/dharmthummar/ai-ayurveda-assistant" target="_blank" style="color: white; text-decoration: underline;">GitHub repository</a>.</p>
+      </div>
+      <a href="#chat-demo" class="btn">
+        <i class="fas fa-comments"></i> Try Ayurveda Assistant Now
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-about">
+          <div class="footer-logo">
+            <div class="footer-logo-icon">A</div>
+            <div class="footer-logo-text">AI Ayurveda Assistant</div>
+          </div>
+          <p>Ayurveda Assistant combines ancient Ayurvedic knowledge with modern technology to provide personalized health and wellness recommendations.</p>
+         
+          <div class="footer-social">
+            <a href="https://github.com/dharmthummar"><i class="fab fa-github"></i></a>
+            <a href="https://twitter.com/dharmthummar"><i class="fab fa-twitter"></i></a>
+            <a href="https://linkedin.com/in/dharmthummar"><i class="fab fa-linkedin"></i></a>
+            <a href="https://instagram.com/dharm_1602"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#project-info">Project Info</a></li>
+            <li><a href="#doshas">Doshas</a></li>
+            <li><a href="#prakriti">Prakriti Analysis</a></li>
+            <li><a href="#chat-demo">Chat Demo</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://github.com/dharmthummar/ai-ayurveda-assistant" target="_blank">GitHub Repository</a></li>
+            <li><a href="https://console.groq.com/docs/api-reference">API Reference</a></li>
+            <li><a href="#">Research Papers</a></li>
+            <li><a href="https://google.com/search?q=charak+samhita+pdf">Ayurvedic References</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 AI Ayurveda Assistant. All Rights are reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // FAQ Accordion
+      const faqItems = document.querySelectorAll('.faq-item');
+      
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        
+        question.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          
+          // Close all items
+          faqItems.forEach(faqItem => {
+            faqItem.classList.remove('active');
+            faqItem.querySelector('.faq-answer').style.maxHeight = '0';
+          });
+          
+          // If the clicked item wasn't active, open it
+          if (!isActive) {
+            item.classList.add('active');
+            answer.style.maxHeight = answer.scrollHeight + 'px';
+          }
+        });
+      });
+      
+      // Initialize the first FAQ item as open
+      const firstFaqItem = document.querySelector('.faq-item');
+      if (firstFaqItem) {
+        firstFaqItem.classList.add('active');
+        const firstAnswer = firstFaqItem.querySelector('.faq-answer');
+        firstAnswer.style.maxHeight = firstAnswer.scrollHeight + 'px';
+      }
+      
+      // Video Play Button
+      const videoContainer = document.querySelector('.video-container');
+      const videoOverlay = document.querySelector('.video-overlay');
+      const heroVideo = document.querySelector('.hero-video');
+      
+      if (videoContainer && videoOverlay && heroVideo) {
+        videoOverlay.addEventListener('click', () => {
+          videoOverlay.style.opacity = '0';
+          setTimeout(() => {
+            videoOverlay.style.display = 'none';
+          }, 500);
+          heroVideo.play();
+        });
+      }
+      
+      // Webcam Analysis Animation
+      const enableCameraBtn = document.getElementById('enable-camera');
+      const webcamOverlay = document.querySelector('.webcam-overlay');
+      const faceScanAnimation = document.querySelector('.face-scan-animation');
+      const webcamVideo = document.querySelector('.webcam-video');
+      const vataBar = document.querySelector('.dosha-bar-vata');
+      const pittaBar = document.querySelector('.dosha-bar-pitta');
+      const kaphaBar = document.querySelector('.dosha-bar-kapha');
+      
+      if (enableCameraBtn && webcamOverlay && faceScanAnimation && webcamVideo) {
+        enableCameraBtn.addEventListener('click', () => {
+          // This is a simulation - in a real app, we would access the camera
+          webcamOverlay.style.opacity = '0';
+          setTimeout(() => {
+            webcamOverlay.style.display = 'none';
+            faceScanAnimation.style.display = 'block';
+            faceScanAnimation.style.opacity = '1';
+            
+            // Simulate scanning
+            setTimeout(() => {
+              faceScanAnimation.style.opacity = '0';
+              
+              // Show results after scanning
+              setTimeout(() => {
+                faceScanAnimation.style.display = 'none';
+                
+                // Animate the dosha bars
+                if (vataBar) vataBar.style.width = '35%';
+                if (pittaBar) pittaBar.style.width = '45%';
+                if (kaphaBar) kaphaBar.style.width = '20%';
+              }, 500);
+            }, 3000);
+          }, 500);
+        });
+      }
+      
+
+
+      const chatWithResultsBtn = document.getElementById('chat-with-results');
+
+
+      if (chatWithResultsBtn) {
+        chatWithResultsBtn.addEventListener('click', () => {
+          window.location.href = '#chat-demo';
+          
+          // Add a message to the chat about the analysis results
+          setTimeout(() => {
+            const chatMessages = document.querySelector('.chat-messages');
+            const typingIndicator = document.querySelector('.typing-indicator');
+            
+            // Remove typing indicator
+            if (typingIndicator) {
+              typingIndicator.remove();
+            }
+            
+            // Add new message
+            const newMessage = document.createElement('div');
+            newMessage.className = 'message assistant-message';
+            newMessage.innerHTML = `
+              <div class="message-content">
+                According to your Prakriti analysis, you are Pitta-Vata dominant. For this, I recommend:<br><br>
+                1. Wake up early, but don't stay up late at night<br>
+                2. Drink warm water and avoid cold beverages<br>
+                3. Do moderate exercise like yoga or light walking<br>
+                4. Avoid spicy and excessively hot foods<br>
+                5. Practice regular meditation<br><br>
+                Would you like more information about any of these recommendations?
+              </div>
+              <div class="message-time">10:35 AM</div>
+            `;
+            chatMessages.appendChild(newMessage);
+            
+            // Scroll to bottom of chat
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 5000);
+        });
+      }
+
+
+
+
+      // Chat Input Functionality
+      const chatInput = document.querySelector('.chat-input input');
+      const chatSendBtn = document.querySelector('.chat-input button');
+      const chatMessages = document.querySelector('.chat-messages');
+      const typingIndicator = document.querySelector('.typing-indicator');
+      
+      if (chatInput && chatSendBtn && chatMessages && typingIndicator) {
+        chatSendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            sendMessage();
+          }
+        });
+        
+        function sendMessage() {
+          const message = chatInput.value.trim();
+          if (message === '') return;
+          
+          // Add user message
+          const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const userMessageHTML = `
+            <div class="message user-message">
+              <div class="message-content">
+                ${message}
+              </div>
+              <div class="message-time">${currentTime}</div>
+            </div>
+          `;
+          
+          chatMessages.insertAdjacentHTML('beforeend', userMessageHTML);
+          chatInput.value = '';
+          
+          // Show typing indicator
+          typingIndicator.style.display = 'flex';
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          
+          // Simulate assistant response after a delay
+          setTimeout(() => {
+            typingIndicator.style.display = 'none';
+            
+            // Add assistant message
+            const assistantResponse = getAssistantResponse(message);
+            const assistantMessageHTML = `
+              <div class="message assistant-message">
+                <div class="message-content">
+                  ${assistantResponse}
+                </div>
+                <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+              </div>
+            `;
+            
+            chatMessages.insertAdjacentHTML('beforeend', assistantMessageHTML);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 1500);
+        }
+        
+        function getAssistantResponse(message) {
+          // Simple response logic - in a real app, this would be connected to an AI
+          const responses = [
+            "According to Ayurveda, balance is key to health. I recommend focusing on establishing a consistent daily routine that aligns with your dosha.",
+            "Ayurvedic texts suggest that herbs like Ashwagandha and Brahmi could be beneficial for your concerns. However, please consult with an Ayurvedic practitioner before starting any herbal regimen.",
+            "In Ayurveda, your symptoms might indicate a Vata imbalance. Consider warm, grounding foods and practices to restore balance.",
+            "Based on Ayurvedic principles, I would suggest incorporating more self-massage (abhyanga) with warm oils suitable for your Dosha.",
+            "Ayurveda recommends adjusting your diet according to the seasons. During this time of year, focus on foods that balance your predominant dosha."
+          ];
+          
+          return responses[Math.floor(Math.random() * responses.length)];
+        }
+      }
+
+      // Mobile menu functionality
+      const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+      const navLinks = document.querySelector('.nav-links');
+
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+          navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+      }
+    });
+  </script>
+
+  
+  <style>
+    /* Floating Chai Button Styles */
+   /* Floating Chai Button Styles */
+#chai-qr-button {
+position: fixed;
+bottom: 30px;
+right: 30px;
+width: 60px;
+height: 60px;
+background-color: #F1C40F;
+color: #333;
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+font-size: 24px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+cursor: pointer;
+z-index: 999;
+transition: all 0.3s ease;
+}
+
+#chai-qr-button:hover {
+transform: translateY(-5px);
+box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* QR Code Modal Styles */
+.qr-modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.7);
+z-index: 1000;
+justify-content: center;
+align-items: center;
+}
+
+.qr-modal-content {
+background-color: var(--background);
+padding: 2rem;
+border-radius: var(--radius);
+max-width: 400px;
+width: 90%;
+text-align: center;
+position: relative;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.qr-close {
+position: absolute;
+top: 15px;
+right: 20px;
+font-size: 28px;
+font-weight: bold;
+color: var(--text-light);
+cursor: pointer;
+}
+
+.qr-modal-content h3 {
+font-size: 1.75rem;
+margin-bottom: 1.5rem;
+color: var(--text);
+}
+
+.qr-code-container {
+margin: 1.5rem auto;
+padding: 1rem;
+background-color: white;
+border-radius: var(--radius);
+width: fit-content;
+}
+
+.qr-code-container img, .qr-code-container canvas {
+display: block;
+max-width: 100%;
+height: auto;
+}
+
+.qr-modal-content p {
+color: var(--text-light);
+margin-bottom: 0.5rem;
+}
+
+.qr-upi-id {
+font-weight: bold;
+color: var(--primary) !important;
+margin-top: 0.5rem;
+}
+  </style>
+ <div id="chai-qr-button">
+  <i class="fas fa-mug-hot"></i>
+</div>
+
+<!-- QR Code Modal -->
+<div id="qr-modal" class="qr-modal">
+  <div class="qr-modal-content">
+    <span class="qr-close">&times;</span>
+    <h3>Buy me a Chai</h3>
+    <div class="qr-code-container" id="qr-code-container">
+      <!-- QR code will be generated here -->
+    </div>
+    <p>Scan with any UPI app to support</p>
+    <p class="qr-upi-id">UPI ID: dthummar17@okaxis</p>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+// QR Code Modal Functionality
+const chaiButton = document.getElementById('chai-qr-button');
+const qrModal = document.getElementById('qr-modal');
+const closeButton = document.querySelector('.qr-close');
+
+// Generate QR code for UPI
+const qrCodeContainer = document.getElementById('qr-code-container');
+const upiString = "upi://pay?pa=dthummar17@okaxis&pn=Dharm%20Thummar&cu=INR";
+
+// Generate QR code when the DOM is loaded
+new QRCode(qrCodeContainer, {
+  text: upiString,
+  width: 300,
+  height: 300,
+  colorDark: "#000000",
+  colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.H
+});
+
+chaiButton.addEventListener('click', function() {
+  qrModal.style.display = 'flex';
+});
+
+closeButton.addEventListener('click', function() {
+  qrModal.style.display = 'none';
+});
+
+window.addEventListener('click', function(event) {
+  if (event.target === qrModal) {
+    qrModal.style.display = 'none';
+  }
+});
+});
+  if (chaiButtonMain) {
+    chaiButtonMain.addEventListener('click', function() {
+      qrModal.style.display = 'flex';
+    });
+  }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</body>
+</html>
