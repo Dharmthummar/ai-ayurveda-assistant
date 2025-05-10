@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayurvedic Constitution Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/webcam.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="content-header">
+            <h2>Ayurvedic Constitution Analysis</h2>
+            <p>Capture facial features to determine your Prakriti (body constitution)</p>
+        </div>
+        
+        <div class="webcam-content">
+            <div class="webcam-column">
+                <div class="webcam-feed">
+                    <video id="webcam" autoplay playsinline></video>
+                    <canvas id="canvas"></canvas>
+                </div>
+                <div class="control-row">
+                    <select id="feature-select" class="btn secondary-btn">
+                        <option value="face">Face</option>
+                        <option value="eyes">Eyes</option>
+                        <option value="mouth">Mouth/Teeth</option>
+                        <option value="skin">Skin</option>
+                        <option value="profile">Profile</option>
+                    </select>
+                    <button id="capture-btn" class="btn primary-btn">Capture</button>
+                    <button id="reset-btn" class="btn secondary-btn">Reset</button>
+                </div>
+                <div class="instructions">
+                    <p id="capture-instructions">Look straight at the camera with a neutral expression.</p>
+                </div>
+                <div id="thumbnails"></div>
+                <button id="analyze-btn" class="btn primary-btn" disabled>Analyze Features</button>
+            </div>
+            <div class="webcam-column">
+                <div class="body-map">
+                    <div id="highlight-face" class="body-map-highlight active"></div>
+                    <div id="highlight-eyes" class="body-map-highlight"></div>
+                    <div id="highlight-mouth" class="body-map-highlight"></div>
+                    <div id="highlight-skin" class="body-map-highlight"></div>
+                    <div id="highlight-profile" class="body-map-highlight"></div>
+                </div>
+                <div id="analysis-result"></div>
+                <div class="action-buttons">
+                    <button id="share-btn" class="btn primary-btn" style="display: none;">Share with Chatbot</button>
+                    <button id="back-btn" class="btn secondary-btn" onclick="window.location.href='/'">Back to Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/webcam.js"></script>
+</body>
+</html>
