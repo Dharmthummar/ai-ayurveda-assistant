@@ -82,6 +82,74 @@ https://github.com/user-attachments/assets/d8f33788-c5b9-4d75-978a-01e92dec832b
 </table>
 
 
+  
+
+
+hear is the table gives more features for classification which also helps to parkriti identification  
+
+
+<table border="1">
+  <tr>
+    <th>Feature</th>
+    <th>Vata</th>
+    <th>Pitta</th>
+    <th>Kapha</th>
+  </tr>
+  <tr>
+    <td>Cheeks</td>
+    <td>Sunken</td>
+    <td>Flat</td>
+    <td>Plump</td>
+  </tr>
+  <tr>
+    <td>Face Shape</td>
+    <td>Angular</td>
+    <td>Triangular</td>
+    <td>Rounded</td>
+  </tr>
+  <tr>
+    <td>Eyes</td>
+    <td>Small, dry</td>
+    <td>Bright, sensitive</td>
+    <td>Large, calm</td>
+  </tr>
+  <tr>
+    <td>Nose</td>
+    <td>Uneven</td>
+    <td>Pointed, red tip</td>
+    <td>Rounded</td>
+  </tr>
+  <tr>
+    <td>Lips</td>
+    <td>Dry, cracked</td>
+    <td>Red, inflamed</td>
+    <td>Smooth, pale</td>
+  </tr>
+  <tr>
+    <td>Teeth</td>
+    <td>Big, thin gums</td>
+    <td>Medium, soft gums</td>
+    <td>White, strong</td>
+  </tr>
+  <tr>
+    <td>Skin Tone</td>
+    <td>Dark, rough</td>
+    <td>Rosy, oily</td>
+    <td>Pale, thick</td>
+  </tr>
+  <tr>
+    <td>Hair</td>
+    <td>Dry, brittle</td>
+    <td>Straight, prone to balding</td>
+    <td>Thick, curly</td>
+  </tr>
+  <tr>
+    <td>Acne</td>
+    <td>Dry patches</td>
+    <td>Inflamed, red</td>
+    <td>Mild, oily</td>
+  </tr>
+</table>
 
 
 
