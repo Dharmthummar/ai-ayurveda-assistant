@@ -24,9 +24,21 @@ https://github.com/user-attachments/assets/d8f33788-c5b9-4d75-978a-01e92dec832b
     <p><em>pitta</em></p>
      <img src="https://github.com/user-attachments/assets/8ae44dec-0f61-4092-b5bd-3072bd2dd037"  width="50" height="50">
     <p><em>kapha</em></p>
- 
-   
   </div>  
+</div>
+<div style="display: flex; justify-content: center; gap: 10px;">
+  <div style="text-align: center;">
+    <img src="https://github.com/user-attachments/assets/e4bfa649-65bc-4063-810a-ae313ec1b1a3" alt="Vata" width="50" height="50">
+    <p><em>Vata</em></p>
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/user-attachments/assets/311c7fac-9489-4106-abce-0b86bc17c085" alt="Pitta" width="50" height="50">
+    <p><em>Pitta</em></p>
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/user-attachments/assets/8ae44dec-0f61-4092-b5bd-3072bd2dd037" alt="Kapha" width="50" height="50">
+    <p><em>Kapha</em></p>
+  </div>
 </div>
 - **Chatbot**: Real-time Ayurvedic health advice tailored to Prakriti.
 
