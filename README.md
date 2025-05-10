@@ -102,8 +102,7 @@ https://github.com/user-attachments/assets/d8f33788-c5b9-4d75-978a-01e92dec832b
 - Use ngrok for dev; deploy on Heroku/AWS for production.
 - Requires Groq API key
 
-<div stayle="opacity=0">
 ![over](https://github.com/user-attachments/assets/88c93995-d6c5-4c24-8c47-a25472f50017)
 ![future](https://github.com/user-attachments/assets/e3d6aa6b-d369-4011-a9f7-c979395a2274)
 ![background](https://github.com/user-attachments/assets/bd5c9b73-80b7-4267-884f-7c0d5b8194d5)
-</div>
+
