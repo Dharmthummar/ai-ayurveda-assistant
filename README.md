@@ -45,6 +45,24 @@ https://github.com/user-attachments/assets/d8f33788-c5b9-4d75-978a-01e92dec832b
 ## Key Features
 
 - **Prakriti Analysis**: Apply MediaPipe to detect landmarks and compute geometric ratios, such as the face width-to-height ratio.
+<table border="1">
+  <tr>
+    <th>Prakriti</th>
+    <th>Mouth, Ear, Nose</th>
+  </tr>
+  <tr>
+    <td>Vata</td>
+    <td>Width &lt; Height</td>
+  </tr>
+  <tr>
+    <td>Pitta</td>
+    <td>Width = Height</td>
+  </tr>
+  <tr>
+    <td>Kapha</td>
+    <td>Width &gt; Height</td>
+  </tr>
+</table>
 
 <table style="margin: 0 auto; text-align: center;">
   <tr>
