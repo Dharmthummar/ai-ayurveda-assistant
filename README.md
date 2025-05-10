@@ -17,12 +17,10 @@ https://github.com/user-attachments/assets/d8f33788-c5b9-4d75-978a-01e92dec832b
 "AI for Ayurveda" is a web app combining AI with Ayurveda for personalized health solutions via:
 - **Prakriti Analysis**: Facial image-based dosha classification (Vata, Pitta, Kapha).
 - **Chatbot**: Real-time Ayurvedic health advice tailored to Prakriti.
-![architecture](https://github.com/user-attachments/assets/9228dfc8-ea42-4204-8136-fd52bbb70d5d)
-
 
 <div style="display: flex; align-items: center;">
   <div>
-    <img src="https://github.com/user-attachments/assets/9228dfc8-ea42-4204-8136-fd52bbb70d5d" alt="Architecture" width="200" height="200">
+    <img src="https://github.com/user-attachments/assets/9228dfc8-ea42-4204-8136-fd52bbb70d5d" alt="Architecture" width="100" height="100">
     <p style="text-align: center;"><em>System Architecture</em></p>
   </div>
 </div>
