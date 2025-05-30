@@ -1,5 +1,5 @@
 # AI for Ayurveda
-
+[![LINK](https://img.shields.io/badge/Visit%20Website-8D6F64)](https://dharmthummar.github.io/ai-ayurveda-assistant/)
 ### Demonstation video
 
 
